@@ -4,12 +4,12 @@
 %global pypi_name autobahn
 %global project_owner tavendo
 %global github_name AutobahnPython
-%global commit 3fce8aca718335db99aba7adbd4426c8a81cb0e0
+%global commit b35d99f1e5ecf3e6063b028271098c551dab5532
 %global shortcommit %(c=%{commit}; echo ${c:0:7})
 %global _docdir_fmt %{name}
 
 Name:           python-%{pypi_name}
-Version:        0.10.5
+Version:        0.10.6
 Release:        1.git%{shortcommit}%{?dist}
 Summary:        Python networking library for WebSocket and WAMP
 
@@ -28,6 +28,7 @@ BuildRequires:  pytest >= 2.6.4
 BuildRequires:  python-six
 BuildRequires:  python2-txaio
 BuildRequires:  python-trollius
+BuildRequires:  python-unittest2
 %if 0%{with_doc}
 BuildRequires:  python-scour # No python 3, https://github.com/oberstet/scour/issues/4
 BuildRequires:  scons
@@ -80,6 +81,7 @@ BuildRequires:  python3-mock >= 1.0.1
 BuildRequires:  python3-pytest >= 2.6.4
 BuildRequires:  python3-six
 BuildRequires:  python3-txaio
+BuildRequires:  python3-unittest2
 Requires:       python3-zope-interface >= 3.6
 Requires:       python3-ujson >= 1.33
 Requires:       python3-wsaccel >= 0.6.2
@@ -119,9 +121,6 @@ HTML documentation
 # Remove upstream's egg-info
 rm -rf %{pypi_name}.egg-info
 
-# Correct end of line encoding on README
-sed -i 's/\r//g' README.md
-
 
 %build
 %py2_build
@@ -145,7 +144,7 @@ py.test-%{python2_version} --pyargs autobahn
 
 %files -n python2-%{pypi_name}
 %license LICENSE
-%doc README.md
+%doc README.rst DEVELOPERS.md
 %{python2_sitelib}/%{pypi_name}-%{version}*-py%{python2_version}.egg-info/
 %{python2_sitelib}/%{pypi_name}/
 %dir %{python2_sitelib}/twisted
@@ -154,7 +153,7 @@ py.test-%{python2_version} --pyargs autobahn
 
 %files -n python3-%{pypi_name}
 %license LICENSE
-%doc README.md
+%doc README.rst DEVELOPERS.md
 %{python3_sitelib}/%{pypi_name}-%{version}*-py%{python3_version}.egg-info/
 %{python3_sitelib}/%{pypi_name}/
 %dir %{python3_sitelib}/twisted
@@ -171,6 +170,9 @@ py.test-%{python2_version} --pyargs autobahn
 
 
 %changelog
+* Sun Sep 6 2015 Julien Enselme <jujens@jujens.eu> - 0.10.6-1.gitb35d99f1
+- Update to 0.10.6
+
 * Sat Aug 15 2015 Julien Enselme <jujens@jujens.eu> - 0.10.5-1.git3fce8ac
 - Update to 0.10.5.post-2
 
