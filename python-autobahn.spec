@@ -4,12 +4,12 @@
 %global pypi_name autobahn
 %global project_owner tavendo
 %global github_name AutobahnPython
-%global commit b35d99f1e5ecf3e6063b028271098c551dab5532
+%global commit a69e7048b86643644a1d8b68dfeec97f9162a4cd
 %global shortcommit %(c=%{commit}; echo ${c:0:7})
 %global _docdir_fmt %{name}
 
 Name:           python-%{pypi_name}
-Version:        0.10.6
+Version:        0.10.7
 Release:        1.git%{shortcommit}%{?dist}
 Summary:        Python networking library for WebSocket and WAMP
 
@@ -170,6 +170,9 @@ py.test-%{python2_version} --pyargs autobahn
 
 
 %changelog
+* Sun Sep 6 2015 Julien Enselme <jujens@jujens.eu> - 0.10.7-1.gita69e7048
+- Update to 0.10.7
+
 * Sun Sep 6 2015 Julien Enselme <jujens@jujens.eu> - 0.10.6-1.gitb35d99f1
 - Update to 0.10.6
 
