@@ -10,7 +10,7 @@
 
 Name:           python-%{pypi_name}
 Version:        0.10.7
-Release:        1.git%{shortcommit}%{?dist}
+Release:        2.git%{shortcommit}%{?dist}
 Summary:        Python networking library for WebSocket and WAMP
 
 License:        MIT
@@ -170,6 +170,9 @@ py.test-%{python2_version} --pyargs autobahn
 
 
 %changelog
+* Tue Nov 10 2015 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 0.10.7-2.gita69e704
+- Rebuilt for https://fedoraproject.org/wiki/Changes/python3.5
+
 * Sun Sep 6 2015 Julien Enselme <jujens@jujens.eu> - 0.10.7-1.gita69e7048
 - Update to 0.10.7
 
