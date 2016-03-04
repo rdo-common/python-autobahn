@@ -2,15 +2,15 @@
 # only deps.
 %global with_doc 0
 %global pypi_name autobahn
-%global project_owner tavendo
-%global github_name AutobahnPython
-%global commit a69e7048b86643644a1d8b68dfeec97f9162a4cd
+%global project_owner crossbario
+%global github_name autobahn-python
+%global commit 22b1183bd06c3329308746fc1fd33c49785f7fab
 %global shortcommit %(c=%{commit}; echo ${c:0:7})
 %global _docdir_fmt %{name}
 
 Name:           python-%{pypi_name}
-Version:        0.10.7
-Release:        3.git%{shortcommit}%{?dist}
+Version:        0.12.1
+Release:        1.git%{shortcommit}%{?dist}
 Summary:        Python networking library for WebSocket and WAMP
 
 License:        MIT
@@ -23,12 +23,13 @@ BuildArch:      noarch
 BuildRequires:  python2-devel
 BuildRequires:  python-pep8
 BuildRequires:  python-flake8
-BuildRequires:  python-mock >= 1.0.1
+BuildRequires:  python-mock >= 1.3.0
 BuildRequires:  pytest >= 2.6.4
-BuildRequires:  python-six
-BuildRequires:  python2-txaio
-BuildRequires:  python-trollius
-BuildRequires:  python-unittest2
+BuildRequires:  python-six >= 1.10.0
+BuildRequires:  python2-txaio >= 2.2.1
+BuildRequires:  python-trollius >= 2.0
+BuildRequires:  python-futures >= 3.0.4
+BuildRequires:  python-unittest2 >= 1.1.0
 %if 0%{with_doc}
 BuildRequires:  python-scour # No python 3, https://github.com/oberstet/scour/issues/4
 BuildRequires:  scons
@@ -49,15 +50,15 @@ for Twisted and asyncio on Python 2 & 3 and for writing servers and clients.
 
 
 %package -n     python2-%{pypi_name}
-Requires:       python-twisted >= 11.1
+Requires:       python-twisted >= 15.5
 Requires:       python-zope-interface >= 3.6
-Requires:       python-trollius >= 0.1.2
-Requires:       python-futures >= 2.1.5
+Requires:       python-trollius >= 2.0
+Requires:       python-futures >= 3.0.4
 Requires:       python2-ujson >= 1.33
 Requires:       python2-wsaccel >= 0.6.2
 Requires:       python-snappy >= 0.5
-Requires:       python-lz4 >= 0.2.1
-Requires:       python-msgpack >= 0.4.0
+Requires:       python-lz4 >= 0.7.0
+Requires:       python-msgpack >= 0.4.6
 Requires:       python-six
 Requires:       python2-txaio
 Summary:        Python networking library for WebSocket and WAMP
@@ -77,17 +78,17 @@ BuildArch:      noarch
 BuildRequires:  python3-devel >= 3.4
 BuildRequires:  python3-pep8
 BuildRequires:  python3-flake8
-BuildRequires:  python3-mock >= 1.0.1
-BuildRequires:  python3-pytest >= 2.6.4
-BuildRequires:  python3-six
-BuildRequires:  python3-txaio
-BuildRequires:  python3-unittest2
+BuildRequires:  python3-mock >= 1.3.0
+BuildRequires:  python3-pytest >= 2.8.6
+BuildRequires:  python3-six >= 1.10.0
+BuildRequires:  python3-txaio >= 2.2.1
+BuildRequires:  python3-unittest2 >= 1.1.0
 Requires:       python3-zope-interface >= 3.6
 Requires:       python3-ujson >= 1.33
 Requires:       python3-wsaccel >= 0.6.2
 Requires:       python3-snappy >= 0.5
 Requires:       python3-lz4 >= 0.2.1
-Requires:       python3-msgpack >= 0.4.0
+Requires:       python3-msgpack >= 0.4.6
 Requires:       python3-six
 Requires:       python3-txaio
 %{?python_provide:%python_provide python3-%{pypi_name}}
@@ -170,6 +171,9 @@ py.test-%{python2_version} --pyargs autobahn
 
 
 %changelog
+* Sat Feb 27 2016 Julien Enselme <jujens@jujens.eu> - 0.12.1-1.git22b1183
+- Update to 0.12.1
+
 * Thu Feb 04 2016 Fedora Release Engineering <releng@fedoraproject.org> - 0.10.7-3.gita69e704
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_24_Mass_Rebuild
 
