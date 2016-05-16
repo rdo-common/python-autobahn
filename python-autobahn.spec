@@ -4,12 +4,12 @@
 %global pypi_name autobahn
 %global project_owner crossbario
 %global github_name autobahn-python
-%global commit 22b1183bd06c3329308746fc1fd33c49785f7fab
+%global commit 81f693d33c2f5878ff89c910ca4c2e1001cc9862
 %global shortcommit %(c=%{commit}; echo ${c:0:7})
 %global _docdir_fmt %{name}
 
 Name:           python-%{pypi_name}
-Version:        0.12.1
+Version:        0.14.0
 Release:        1.git%{shortcommit}%{?dist}
 Summary:        Python networking library for WebSocket and WAMP
 
@@ -51,7 +51,7 @@ for Twisted and asyncio on Python 2 & 3 and for writing servers and clients.
 
 %package -n     python2-%{pypi_name}
 Requires:       python-twisted >= 15.5
-Requires:       python-zope-interface >= 3.6
+Requires:       python-zope-interface >= 4.1.3
 Requires:       python-trollius >= 2.0
 Requires:       python-futures >= 3.0.4
 Requires:       python2-ujson >= 1.33
@@ -59,8 +59,8 @@ Requires:       python2-wsaccel >= 0.6.2
 Requires:       python-snappy >= 0.5
 Requires:       python-lz4 >= 0.7.0
 Requires:       python-msgpack >= 0.4.6
-Requires:       python-six
-Requires:       python2-txaio
+Requires:       python-six >= 1.10.0
+Requires:       python2-txaio >= 2.5.1
 Summary:        Python networking library for WebSocket and WAMP
 %{?python_provide:%python_provide python2-%{pypi_name}}
 
@@ -89,8 +89,8 @@ Requires:       python3-wsaccel >= 0.6.2
 Requires:       python3-snappy >= 0.5
 Requires:       python3-lz4 >= 0.2.1
 Requires:       python3-msgpack >= 0.4.6
-Requires:       python3-six
-Requires:       python3-txaio
+Requires:       python3-six >= 1.10.0
+Requires:       python3-txaio >= 2.5.1
 %{?python_provide:%python_provide python3-%{pypi_name}}
 
 %description -n python3-%{pypi_name}
@@ -171,6 +171,9 @@ py.test-%{python2_version} --pyargs autobahn
 
 
 %changelog
+* Mon May 17 2016 Julien Enselme <jujens@jujens.eu> - 0.14.0-1.git81f693d
+- Update to 0.14.0
+
 * Sat Feb 27 2016 Julien Enselme <jujens@jujens.eu> - 0.12.1-1.git22b1183
 - Update to 0.12.1
 
