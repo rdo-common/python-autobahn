@@ -174,7 +174,7 @@ py.test-%{python2_version} --pyargs autobahn
 * Tue Jul 19 2016 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 0.14.0-2.git81f693d
 - https://fedoraproject.org/wiki/Changes/Automatic_Provides_for_Python_RPM_Packages
 
-* Mon May 17 2016 Julien Enselme <jujens@jujens.eu> - 0.14.0-1.git81f693d
+* Mon May 16 2016 Julien Enselme <jujens@jujens.eu> - 0.14.0-1.git81f693d
 - Update to 0.14.0
 
 * Sat Feb 27 2016 Julien Enselme <jujens@jujens.eu> - 0.12.1-1.git22b1183
