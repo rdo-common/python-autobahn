@@ -10,7 +10,7 @@
 
 Name:           python-%{pypi_name}
 Version:        0.14.0
-Release:        1.git%{shortcommit}%{?dist}
+Release:        2.git%{shortcommit}%{?dist}
 Summary:        Python networking library for WebSocket and WAMP
 
 License:        MIT
@@ -171,6 +171,9 @@ py.test-%{python2_version} --pyargs autobahn
 
 
 %changelog
+* Tue Jul 19 2016 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 0.14.0-2.git81f693d
+- https://fedoraproject.org/wiki/Changes/Automatic_Provides_for_Python_RPM_Packages
+
 * Mon May 17 2016 Julien Enselme <jujens@jujens.eu> - 0.14.0-1.git81f693d
 - Update to 0.14.0
 
