@@ -1,0 +1,252 @@
+From 2ef13a6804054de74eb36455b58a64a3c701f889 Mon Sep 17 00:00:00 2001
+From: meejah <meejah@meejah.ca>
+Date: Wed, 15 Jun 2016 12:42:43 -0600
+Subject: [PATCH 2/2] Add allowNullOrigin and fix allowed-origin checks
+
+---
+ autobahn/twisted/test/test_protocol.py        | 196 ++++++++++++++++++++++++++
+ autobahn/util.py                              |   7 +-
+ autobahn/websocket/protocol.py                | 120 ++++++++++++++--
+ autobahn/websocket/test/test_websocket.py     |   2 +
+ docs/changelog.rst                            |   5 +
+ docs/websocket/programming.rst                |   2 +-
+ examples/twisted/websocket/echo_tls/server.py |  20 ++-
+ 7 files changed, 337 insertions(+), 15 deletions(-)
+
+diff --git a/autobahn/util.py b/autobahn/util.py
+index 3957d40..a84f735 100644
+--- a/autobahn/util.py
++++ b/autobahn/util.py
+@@ -476,4 +476,8 @@
+     :returns: Computed regular expressions.
+     :rtype: list of obj
+     """
+-    return [re.compile(wc.replace('.', '\.').replace('*', '.*')) for wc in wildcards]
++    # note that we add the ^ and $ so that the *entire* string must
++    # match. Without this, e.g. a prefix will match:
++    # re.match('.*good\\.com', 'good.com.evil.com')  # match!
++    # re.match('.*good\\.com$', 'good.com.evil.com') # no match!
++    return [re.compile('^' + wc.replace('.', '\.').replace('*', '.*') + '$') for wc in wildcards]
+diff --git a/autobahn/websocket/protocol.py b/autobahn/websocket/protocol.py
+index 3b5440c..ec4eea8 100755
+--- a/autobahn/websocket/protocol.py
++++ b/autobahn/websocket/protocol.py
+@@ -179,6 +179,83 @@
+     return parsed.scheme == "wss", parsed.hostname, port, resource, path, params
+ 
+ 
++def _url_to_origin(url):
++    """
++    Given an RFC6455 Origin URL, this returns the (scheme, host, port)
++    triple. If there's no port, and the scheme isn't http or https
++    then port will be None
++    """
++    if url.lower() == 'null':
++        return 'null'
++
++    res = urllib.parse.urlsplit(url)
++    scheme = res.scheme.lower()
++    if scheme == 'file':
++        # when browsing local files, Chrome sends file:// URLs,
++        # Firefox sends 'null'
++        return 'null'
++
++    host = res.hostname
++    port = res.port
++    if port is None:
++        try:
++            port = {'https': 443, 'http': 80}[scheme]
++        except KeyError:
++            port = None
++
++    if not host:
++        raise ValueError("No host part in Origin '{}'".format(url))
++    return scheme, host, port
++
++
++def _is_same_origin(websocket_origin, host_scheme, host_port, host_policy):
++    """
++    Internal helper. Returns True if the provided websocket_origin
++    triple should be considered valid given the provided policy and
++    expected host_port.
++
++    Currently, the policy is just the list of allowedOriginsPatterns
++    from the WebSocketProtocol instance. Schemes and ports are matched
++    first, and only if there is not a mismatch do we compare each
++    allowed-origin pattern against the host.
++    """
++
++    if websocket_origin == 'null':
++        # nothing is the same as the null origin
++        return False
++
++    if not isinstance(websocket_origin, tuple) or not len(websocket_origin) == 3:
++        raise ValueError("'websocket_origin' must be a 3-tuple")
++
++    (origin_scheme, origin_host, origin_port) = websocket_origin
++
++    # so, theoretically we should match on the 3-tuple of (scheme,
++    # origin, port) to follow the RFC. However, the existing API just
++    # allows you to pass a list of regular expressions that match
++    # against the Origin header -- so to keep that API working, we
++    # just match a reconstituted/sanitized Origin line against the
++    # regular expressions. We *do* explicitly match the scheme first,
++    # however!
++
++    # therefore, the default of "*" will still match everything (even
++    # if things are on weird ports). To be "actually secure" and pass
++    # explicit ports, you can put it in your matcher
++    # (e.g. "https://*.example.com:1234")
++
++    template = '{scheme}://{host}:{port}'
++    origin_header = template.format(
++        scheme=origin_scheme,
++        host=origin_host,
++        port=origin_port,
++    )
++    # so, this will be matching against e.g. "http://example.com:8080"
++    for origin_pattern in host_policy:
++        if origin_pattern.match(origin_header):
++            return True
++
++    return False
++
++
+ class TrafficStats(object):
+ 
+     def __init__(self):
+@@ -645,6 +722,7 @@
+                            'flashSocketPolicy',
+                            'allowedOrigins',
+                            'allowedOriginsPatterns',
++                           'allowNullOrigin',
+                            'maxConnections']
+     """
+    Configuration attributes specific to servers.
+@@ -2984,19 +3062,32 @@
+                 if http_headers_cnt[websocket_origin_header_key] > 1:
+                     return self.failHandshake("HTTP Origin header appears more than once in opening handshake request")
+                 self.websocket_origin = self.http_headers[websocket_origin_header_key].strip()
++                try:
++                    origin_tuple = _url_to_origin(self.websocket_origin)
++                except ValueError as e:
++                    return self.failHandshake(
++                        "HTTP Origin header invalid: {}".format(e)
++                    )
++                have_origin = True
+             else:
+                 # non-browser clients are allowed to omit this header
+-                pass
++                have_origin = False
+ 
+-            # check allowed WebSocket origins
+-            #
+-            origin_is_allowed = False
+-            for origin_pattern in self.allowedOriginsPatterns:
+-                if origin_pattern.match(self.websocket_origin):
++            if have_origin:
++                if origin_tuple == 'null' and self.factory.allowNullOrigin:
+                     origin_is_allowed = True
+-                    break
+-            if not origin_is_allowed:
+-                return self.failHandshake("WebSocket connection denied: origin '{0}' not allowed".format(self.websocket_origin))
++                else:
++                    origin_is_allowed = _is_same_origin(
++                        origin_tuple,
++                        'https' if self.factory.isSecure else 'http',
++                        self.factory.externalPort or self.factory.port,
++                        self.allowedOriginsPatterns,
++                    )
++                if not origin_is_allowed:
++                    return self.failHandshake(
++                        "WebSocket connection denied: origin '{0}' "
++                        "not allowed".format(self.websocket_origin)
++                    )
+ 
+             # Sec-WebSocket-Key (Hybi) or Sec-WebSocket-Key1/Sec-WebSocket-Key2 (Hixie-76)
+             #
+@@ -3561,6 +3652,7 @@
+         # check WebSocket origin against this list
+         self.allowedOrigins = ["*"]
+         self.allowedOriginsPatterns = wildcards2patterns(self.allowedOrigins)
++        self.allowNullOrigin = True
+ 
+         # maximum number of concurrent connections
+         self.maxConnections = 0
+@@ -3588,6 +3680,7 @@
+                            serveFlashSocketPolicy=None,
+                            flashSocketPolicy=None,
+                            allowedOrigins=None,
++                           allowNullOrigin=False,
+                            maxConnections=None):
+         """
+         Set WebSocket protocol options used as defaults for new protocol instances.
+@@ -3639,6 +3732,10 @@
+         :type flashSocketPolicy: str or None
+         :param allowedOrigins: A list of allowed WebSocket origins (with '*' as a wildcard character).
+         :type allowedOrigins: list or None
++
++        :param allowNullOrigin: if True, allow WebSocket connections whose `Origin:` is `"null"`.
++        :type allowNullOrigin: bool
++
+         :param maxConnections: Maximum number of concurrent connections. Set to `0` to disable (default: `0`).
+         :type maxConnections: int or None
+         """
+@@ -3715,7 +3812,12 @@
+ 
+         if allowedOrigins is not None and allowedOrigins != self.allowedOrigins:
+             self.allowedOrigins = allowedOrigins
+-            self.allowedOriginsPatterns = wildcards2patterns(self.allowedOrigins)
++            self.allowedOriginsPatterns = wildcards2patterns(self.allowedOrigins)
++
++        if allowNullOrigin not in [True, False]:
++            raise ValueError('allowNullOrigin must be a bool')
++        self.allowNullOrigin = allowNullOrigin
++
+ 
+         if maxConnections is not None and maxConnections != self.maxConnections:
+             assert(type(maxConnections) in six.integer_types)
+diff --git a/autobahn/websocket/test/test_websocket.py b/autobahn/websocket/test/test_websocket.py
+index 69cba7f..81a2314 100644
+--- a/autobahn/websocket/test/test_websocket.py
++++ b/autobahn/websocket/test/test_websocket.py
+@@ -158,6 +158,8 @@ def setUp(self):
+             self.proto.connectionMade()
+ 
+         def tearDown(self):
++            if self.proto.openHandshakeTimeoutCall:
++                self.proto.openHandshakeTimeoutCall.cancel()
+             self.factory.doStop()
+             # not really necessary, but ...
+             del self.factory
+diff --git a/examples/twisted/websocket/echo_tls/server.py b/examples/twisted/websocket/echo_tls/server.py
+index 35d6a67..00444dc 100644
+--- a/examples/twisted/websocket/echo_tls/server.py
++++ b/examples/twisted/websocket/echo_tls/server.py
+@@ -61,13 +61,23 @@
+                                      debugCodePaths=debug)
+ 
+     factory.protocol = EchoServerProtocol
+-    factory.setProtocolOptions(allowHixie76=True)
++    # by default, allowedOrigins is "*" and will work fine out of the
++    # box, but we can do better and be more-explicit about what we
++    # allow. We are serving the Web content on 8080, but our WebSocket
++    # listener is on 9000 so the Origin sent by the browser will be
++    # from port 8080...
++    factory.setProtocolOptions(
++        allowedOrigins=[
++            "https://127.0.0.1:8080",
++            "https://localhost:8080",
++        ]
++    )
+     listenWS(factory, contextFactory)
+ 
+     webdir = File(".")
+     webdir.contentTypes['.crt'] = 'application/x-x509-ca-cert'
+     web = Site(webdir)
+-    # reactor.listenSSL(8080, web, contextFactory)
+-    reactor.listenTCP(8080, web)
++    reactor.listenSSL(8080, web, contextFactory)
++    # reactor.listenTCP(8080, web)
+ 
+     reactor.run()

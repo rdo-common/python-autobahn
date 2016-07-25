@@ -2,15 +2,15 @@
 # only deps.
 %global with_doc 0
 %global pypi_name autobahn
-%global project_owner tavendo
-%global github_name AutobahnPython
-%global commit a69e7048b86643644a1d8b68dfeec97f9162a4cd
+%global project_owner crossbario
+%global github_name autobahn-python
+%global commit cf10233bec6d2e3b2cd4ce14a50ac7f43180617b
 %global shortcommit %(c=%{commit}; echo ${c:0:7})
 %global _docdir_fmt %{name}
 
 Name:           python-%{pypi_name}
-Version:        0.10.7
-Release:        3.git%{shortcommit}%{?dist}
+Version:        0.10.9
+Release:        1.git%{shortcommit}%{?dist}
 Summary:        Python networking library for WebSocket and WAMP
 
 License:        MIT
@@ -18,6 +18,9 @@ URL:            https://pypi.python.org/pypi/%{pypi_name}
 # pypi release doen't include README, nor doc, so using github instead
 # See: https://github.com/tavendo/AutobahnPython/issues/429
 Source0:        https://github.com/%{project_owner}/%{github_name}/archive/%{commit}/%{github_name}-%{commit}.tar.gz
+
+# Fix incorrect allowedOrigin checks. See https://github.com/crossbario/autobahn-python/pull/693, bz:1359792 and bz:1359791
+Patch0: 693-allowed-origins.patch
 
 BuildArch:      noarch
 BuildRequires:  python2-devel
@@ -121,6 +124,8 @@ HTML documentation
 # Remove upstream's egg-info
 rm -rf %{pypi_name}.egg-info
 
+%patch0 -p1
+
 
 %build
 %py2_build
@@ -170,6 +175,10 @@ py.test-%{python2_version} --pyargs autobahn
 
 
 %changelog
+* Mon Jul 25 2016 Julien Enselme <jujens@jujens.eu> - 0.10.9-1.gitcf10233
+- Update to 0.10.9
+- Apply patch to correct allowedOrigin validation. See bz:1359792, bz:1359791 and https://github.com/crossbario/autobahn-python/pull/693
+
 * Thu Feb 04 2016 Fedora Release Engineering <releng@fedoraproject.org> - 0.10.7-3.gita69e704
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_24_Mass_Rebuild
 
