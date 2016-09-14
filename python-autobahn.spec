@@ -8,6 +8,10 @@
 %global shortcommit %(c=%{commit}; echo ${c:0:7})
 %global _docdir_fmt %{name}
 
+%if 0%{?fedora}
+%global with_python3 1
+%endif
+
 Name:           python-%{pypi_name}
 Version:        0.10.9
 Release:        1.git%{shortcommit}%{?dist}
@@ -74,6 +78,7 @@ implementations of
 for Twisted and asyncio on Python 2 & 3 and for writing servers and clients.
 
 
+%if 0%{?with_python3}
 %package -n     python3-%{pypi_name}
 Summary:        Python networking library for WebSocket and WAMP
 BuildArch:      noarch
@@ -101,6 +106,7 @@ implementations of
 * The WebSocket Protocol http://tools.ietf.org/html/rfc6455_
 * The Web Application Messaging Protocol (WAMP) http://wamp.ws
 for Twisted and asyncio on Python 2 & 3 and for writing servers and clients.
+%endif
 
 
 %if 0%{with_doc}
@@ -129,7 +135,9 @@ rm -rf %{pypi_name}.egg-info
 
 %build
 %py2_build
+%if 0%{?with_python3}
 %py3_build
+%endif
 
 %if 0%{with_doc}
 # Build doc
@@ -139,11 +147,15 @@ cd doc && make build_no_network
 
 %install
 %py2_install
+%if 0%{?with_python3}
 %py3_install
+%endif
 
 
 %check
+%if 0%{?with_python3}
 py.test-%{python3_version} --pyargs autobahn
+%endif
 py.test-%{python2_version} --pyargs autobahn
 
 
@@ -156,6 +168,7 @@ py.test-%{python2_version} --pyargs autobahn
 %dir %{python2_sitelib}/twisted/plugins
 %{python2_sitelib}/twisted/plugins/autobahn*.py*
 
+%if 0%{?with_python3}
 %files -n python3-%{pypi_name}
 %license LICENSE
 %doc README.rst DEVELOPERS.md
@@ -166,6 +179,7 @@ py.test-%{python2_version} --pyargs autobahn
 %dir %{python3_sitelib}/twisted/plugins/__pycache__
 %{python3_sitelib}/twisted/plugins/autobahn*.py
 %{python3_sitelib}/twisted/plugins/__pycache__/autobahn*.py*
+%endif
 
 %if 0%{with_doc}
 %files doc
