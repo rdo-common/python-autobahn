@@ -6,6 +6,10 @@
 %global github_name autobahn-python
 %global _docdir_fmt %{name}
 
+%if 0%{?fedora} || 0%{?rhel} > 7
+%global with_python3 1
+%endif
+
 Name:           python-%{pypi_name}
 Version:        19.1.1
 Release:        1%{?dist}
@@ -19,7 +23,11 @@ Source0:        https://github.com/%{project_owner}/%{github_name}/archive/v%{ve
 
 BuildArch:      noarch
 BuildRequires:  python2-devel
+%if 0%{?fedora} || 0%{?rhel} > 7
 BuildRequires:  python2-pep8
+%else
+BuildRequires:  python-pep8
+%endif
 BuildRequires:  python2-flake8
 BuildRequires:  python2-mock >= 1.3.0
 BuildRequires:  python2-pytest >= 2.6.4
@@ -71,6 +79,7 @@ implementations of
 for Twisted and asyncio on Python 2 & 3 and for writing servers and clients.
 
 
+%if 0%{?with_python3}
 %package -n     python3-%{pypi_name}
 Summary:        Python networking library for WebSocket and WAMP
 BuildArch:      noarch
@@ -100,6 +109,7 @@ implementations of
 * The WebSocket Protocol http://tools.ietf.org/html/rfc6455_
 * The Web Application Messaging Protocol (WAMP) http://wamp.ws
 for Twisted and asyncio on Python 2 & 3 and for writing servers and clients.
+%endif
 
 
 %if 0%{with_doc}
@@ -126,7 +136,9 @@ rm -rf %{pypi_name}.egg-info
 
 %build
 %py2_build
+%if 0%{?with_python3}
 %py3_build
+%endif
 
 %if 0%{with_doc}
 # Build doc
@@ -136,12 +148,16 @@ cd doc && make build_no_network
 
 %install
 %py2_install
+%if 0%{?with_python3}
 %py3_install
+%endif
 
 
 %check
+%if 0%{?with_python3}
 # Ignore tests that rely on optionnal and not packaged deps.
 USE_ASYNCIO=1 PYTHONPATH=$(pwd) py.test-%{python3_version} --pyargs autobahn -k 'not test_unknown_arg and not test_no_memory_arg and not test_basic and not test_argon2id_static and not test_websocket_custom_loop'
+%endif
 # Skip Python 3 only tests
 rm -f autobahn/asyncio/test/test_asyncio_websocket.py
 USE_ASYNCIO=1 PYTHONPATH=$(pwd) py.test-%{python2_version} --pyargs autobahn -k 'not test_unknown_arg and not test_no_memory_arg and not test_basic and not test_argon2id_static and not test_websocket_custom_loop'
@@ -156,6 +172,7 @@ USE_ASYNCIO=1 PYTHONPATH=$(pwd) py.test-%{python2_version} --pyargs autobahn -k 
 %dir %{python2_sitelib}/twisted/plugins
 %{python2_sitelib}/twisted/plugins/autobahn*.py*
 
+%if 0%{?with_python3}
 %files -n python3-%{pypi_name}
 %license LICENSE
 %doc README.rst DEVELOPERS.md
@@ -166,6 +183,7 @@ USE_ASYNCIO=1 PYTHONPATH=$(pwd) py.test-%{python2_version} --pyargs autobahn -k 
 %dir %{python3_sitelib}/twisted/plugins/__pycache__
 %{python3_sitelib}/twisted/plugins/autobahn*.py
 %{python3_sitelib}/twisted/plugins/__pycache__/autobahn*.py*
+%endif
 
 %if 0%{with_doc}
 %files doc
