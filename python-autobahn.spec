@@ -10,7 +10,7 @@
 
 Name:           python-%{pypi_name}
 Version:        0.16.0
-Release:        1.git%{shortcommit}%{?dist}
+Release:        2.git%{shortcommit}%{?dist}
 Summary:        Python networking library for WebSocket and WAMP
 
 License:        MIT
@@ -18,6 +18,8 @@ URL:            https://pypi.python.org/pypi/%{pypi_name}
 # pypi release doen't include README, nor doc, so using github instead
 # See: https://github.com/tavendo/AutobahnPython/issues/429
 Source0:        https://github.com/%{project_owner}/%{github_name}/archive/%{commit}/%{github_name}-%{commit}.tar.gz
+# Proposed upstream. See: https://github.com/crossbario/autobahn-python/pull/741
+Patch0:         fix-pytest3.patch
 
 BuildArch:      noarch
 BuildRequires:  python2-devel
@@ -118,6 +120,7 @@ HTML documentation
 
 %prep
 %setup -qn %{github_name}-%{commit}
+%patch0 -p1
 
 # Remove upstream's egg-info
 rm -rf %{pypi_name}.egg-info
@@ -139,8 +142,8 @@ cd doc && make build_no_network
 
 
 %check
-py.test-%{python3_version} --pyargs autobahn
-py.test-%{python2_version} --pyargs autobahn
+PYTHONPATH=$(pwd) py.test-%{python3_version} --pyargs autobahn
+PYTHONPATH=$(pwd) py.test-%{python2_version} --pyargs autobahn
 
 
 %files -n python2-%{pypi_name}
@@ -171,6 +174,9 @@ py.test-%{python2_version} --pyargs autobahn
 
 
 %changelog
+* Sat Oct 01 2016 Julien Enselme <jujens@jujens.eu> - 0.16.0-2.gitade9eb5
+- Fix tests for pytest3
+
 * Sun Sep 18 2016 Julien Enselme <jujens@jujens.eu> - 0.16.0-1.gitade9eb5
 - Update to 0.16.0
 
