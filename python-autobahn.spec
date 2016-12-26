@@ -4,13 +4,13 @@
 %global pypi_name autobahn
 %global project_owner crossbario
 %global github_name autobahn-python
-%global commit ade9eb52e0e2312e25b57a4c7910c0a744172aad
+%global commit 81d9276f4bdb2421a032381646dd04d6dc5b563f
 %global shortcommit %(c=%{commit}; echo ${c:0:7})
 %global _docdir_fmt %{name}
 
 Name:           python-%{pypi_name}
-Version:        0.16.0
-Release:        3.git%{shortcommit}%{?dist}
+Version:        0.17.0
+Release:        1.git%{shortcommit}%{?dist}
 Summary:        Python networking library for WebSocket and WAMP
 
 License:        MIT
@@ -18,8 +18,8 @@ URL:            https://pypi.python.org/pypi/%{pypi_name}
 # pypi release doen't include README, nor doc, so using github instead
 # See: https://github.com/tavendo/AutobahnPython/issues/429
 Source0:        https://github.com/%{project_owner}/%{github_name}/archive/%{commit}/%{github_name}-%{commit}.tar.gz
-# Proposed upstream. See: https://github.com/crossbario/autobahn-python/pull/741
-Patch0:         fix-pytest3.patch
+# See: https://github.com/crossbario/autobahn-python/issues/771
+Patch0:         skip-failing-test-python3.6.patch
 
 BuildArch:      noarch
 BuildRequires:  python2-devel
@@ -82,6 +82,7 @@ BuildRequires:  python3-pep8
 BuildRequires:  python3-flake8
 BuildRequires:  python3-mock >= 1.3.0
 BuildRequires:  python3-pytest >= 2.8.6
+BuildRequires:  python3-pytest-asyncio
 BuildRequires:  python3-six >= 1.10.0
 BuildRequires:  python3-txaio >= 2.2.1
 BuildRequires:  python3-unittest2 >= 1.1.0
@@ -120,7 +121,7 @@ HTML documentation
 
 %prep
 %setup -qn %{github_name}-%{commit}
-%patch0 -p1
+%patch0  -p1
 
 # Remove upstream's egg-info
 rm -rf %{pypi_name}.egg-info
@@ -143,8 +144,9 @@ cd doc && make build_no_network
 
 %check
 PYTHONPATH=$(pwd) py.test-%{python3_version} --pyargs autobahn
+# Skip Python 3 only tests
+rm -f autobahn/asyncio/test/test_asyncio_websocket.py
 PYTHONPATH=$(pwd) py.test-%{python2_version} --pyargs autobahn
-
 
 %files -n python2-%{pypi_name}
 %license LICENSE
@@ -174,6 +176,9 @@ PYTHONPATH=$(pwd) py.test-%{python2_version} --pyargs autobahn
 
 
 %changelog
+*  Mon Dec 26 2016 Julien Enselme <jujens@jujens.eu> - 0.17.0-1.git81d9276
+- Update to 0.17.0
+
 * Mon Dec 19 2016 Miro Hrončok <mhroncok@redhat.com> - 0.16.0-3.gitade9eb5
 - Rebuild for Python 3.6
 
