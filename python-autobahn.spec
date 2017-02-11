@@ -10,7 +10,7 @@
 
 Name:           python-%{pypi_name}
 Version:        0.17.0
-Release:        1.git%{shortcommit}%{?dist}
+Release:        2.git%{shortcommit}%{?dist}
 Summary:        Python networking library for WebSocket and WAMP
 
 License:        MIT
@@ -176,6 +176,9 @@ PYTHONPATH=$(pwd) py.test-%{python2_version} --pyargs autobahn
 
 
 %changelog
+* Sat Feb 11 2017 Fedora Release Engineering <releng@fedoraproject.org> - 0.17.0-2.git81d9276
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_26_Mass_Rebuild
+
 *  Mon Dec 26 2016 Julien Enselme <jujens@jujens.eu> - 0.17.0-1.git81d9276
 - Update to 0.17.0
 
