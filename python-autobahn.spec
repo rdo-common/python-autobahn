@@ -4,13 +4,13 @@
 %global pypi_name autobahn
 %global project_owner crossbario
 %global github_name autobahn-python
-%global commit 81d9276f4bdb2421a032381646dd04d6dc5b563f
+%global commit 0eef8c724973e513923d27361173f05d9bdfc3ca
 %global shortcommit %(c=%{commit}; echo ${c:0:7})
 %global _docdir_fmt %{name}
 
 Name:           python-%{pypi_name}
-Version:        0.17.0
-Release:        2.git%{shortcommit}%{?dist}
+Version:        0.17.2
+Release:        1.git%{shortcommit}%{?dist}
 Summary:        Python networking library for WebSocket and WAMP
 
 License:        MIT
@@ -176,6 +176,9 @@ PYTHONPATH=$(pwd) py.test-%{python2_version} --pyargs autobahn
 
 
 %changelog
+* Tue Feb 28 2017 Julien Enselme <jujens@jujens.eu> - 0.17.2-1.git0eef8c7
+- Update to 0.17.2
+
 * Sat Feb 11 2017 Fedora Release Engineering <releng@fedoraproject.org> - 0.17.0-2.git81d9276
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_26_Mass_Rebuild
 
