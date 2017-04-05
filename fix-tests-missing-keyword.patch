@@ -1,0 +1,36 @@
+--- a/autobahn/asyncio/test/test_asyncio_rawsocket.py	2017-03-28 19:51:47.000000000 +0200
++++ b/autobahn/asyncio/test/test_asyncio_rawsocket.py	2017-04-05 22:33:32.164588767 +0200
+@@ -84,7 +84,7 @@
+ 
+     def test_raw_socket_server1(self):
+ 
+-        server = RawSocketServerProtocol(max_size=10000)
++        server = RawSocketServerProtocol()
+         ser = Mock(return_value=True)
+         on_hs = Mock()
+         transport = Mock()
+@@ -101,13 +101,13 @@
+         ser.assert_called_once_with(1)
+         on_hs.assert_called_once_with()
+         self.assertTrue(transport.write.called)
+-        transport.write.assert_called_once_with(b'\x7F\x51\x00\x00')
++        transport.write.assert_called_once_with(b'\x7F\xF1\x00\x00')
+         self.assertFalse(transport.close.called)
+         receiver.assert_called_once_with(b'abcd')
+ 
+     def test_raw_socket_server_errors(self):
+ 
+-        server = RawSocketServerProtocol(max_size=10000)
++        server = RawSocketServerProtocol()
+         ser = Mock(return_value=True)
+         on_hs = Mock()
+         transport = Mock()
+@@ -120,7 +120,7 @@
+         server.data_received(b'abcdef')
+         transport.close.assert_called_once_with()
+ 
+-        server = RawSocketServerProtocol(max_size=10000)
++        server = RawSocketServerProtocol()
+         ser = Mock(return_value=False)
+         on_hs = Mock()
+         transport = Mock(spec_set=('close', 'write', 'get_extra_info'))
