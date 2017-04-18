@@ -4,12 +4,12 @@
 %global pypi_name autobahn
 %global project_owner crossbario
 %global github_name autobahn-python
-%global commit fd7ec419b28e7a2af687ded78f02f1583712fcc3
+%global commit 731228a19da806e8a219090ff1d746adfa3388c6
 %global shortcommit %(c=%{commit}; echo ${c:0:7})
 %global _docdir_fmt %{name}
 
 Name:           python-%{pypi_name}
-Version:        0.18.1
+Version:        0.18.2
 Release:        1.git%{shortcommit}%{?dist}
 Summary:        Python networking library for WebSocket and WAMP
 
@@ -18,10 +18,6 @@ URL:            https://pypi.python.org/pypi/%{pypi_name}
 # pypi release doen't include README, nor doc, so using github instead
 # See: https://github.com/tavendo/AutobahnPython/issues/429
 Source0:        https://github.com/%{project_owner}/%{github_name}/archive/%{commit}/%{github_name}-%{commit}.tar.gz
-# See: https://github.com/crossbario/autobahn-python/issues/771
-Patch0:         skip-failing-test-python3.6.patch
-# See: https://github.com/crossbario/autobahn-python/issues/811
-Patch1:         fix-tests-missing-keyword.patch
 
 BuildArch:      noarch
 BuildRequires:  python2-devel
@@ -123,8 +119,6 @@ HTML documentation
 
 %prep
 %setup -qn %{github_name}-%{commit}
-%patch0  -p1
-%patch1 -p1
 
 # Remove upstream's egg-info
 rm -rf %{pypi_name}.egg-info
@@ -179,6 +173,9 @@ PYTHONPATH=$(pwd) py.test-%{python2_version} --pyargs autobahn
 
 
 %changelog
+* Tue Apr 18 2017 Julien Enselme <jujens@jujens.eu> - 0.18.2-1.git731228a
+- Update to 0.18.2
+
 * Wed Apr 05 2017 Julien Enselme <jujens@jujens.eu> - 0.18.1-1.gitfd7ec41
 - Update to 0.18.1
 
