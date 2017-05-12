@@ -173,7 +173,7 @@ PYTHONPATH=$(pwd) py.test-%{python2_version} --pyargs autobahn
 
 
 %changelog
-* Sun May 05 2017 Julien Enselme <jujens@jujens.eu> - 17.5.1-1.git73bcac2
+* Sun May 07 2017 Julien Enselme <jujens@jujens.eu> - 17.5.1-1.git73bcac2
 - Update to 17.5.1
 
 * Tue Apr 18 2017 Julien Enselme <jujens@jujens.eu> - 0.18.2-1.git731228a
