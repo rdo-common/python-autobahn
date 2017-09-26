@@ -4,12 +4,12 @@
 %global pypi_name autobahn
 %global project_owner crossbario
 %global github_name autobahn-python
-%global commit 164106acf8c2d30a6aa7d4cdd26346715ea3b833
+%global commit d398c4dd7b446ab68c142e18a3bf722b8e96a372
 %global shortcommit %(c=%{commit}; echo ${c:0:7})
 %global _docdir_fmt %{name}
 
 Name:           python-%{pypi_name}
-Version:        17.9.2
+Version:        17.9.3
 Release:        1.git%{shortcommit}%{?dist}
 Summary:        Python networking library for WebSocket and WAMP
 
@@ -174,6 +174,9 @@ PYTHONPATH=$(pwd) py.test-%{python2_version} --pyargs autobahn
 
 
 %changelog
+* Tue Sep 26 2017 Julien Enselme <jujens@jujens.eu> - 17.9.3-1.gitd398c4d
+- Update to 17.9.3
+
 * Thu Sep 14 2017 Julien Enselme <jujens@jujens.eu> - 17.9.2-1.git164106a
 - Update to 17.9.2
 
