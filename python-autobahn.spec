@@ -4,20 +4,18 @@
 %global pypi_name autobahn
 %global project_owner crossbario
 %global github_name autobahn-python
-%global commit d398c4dd7b446ab68c142e18a3bf722b8e96a372
-%global shortcommit %(c=%{commit}; echo ${c:0:7})
 %global _docdir_fmt %{name}
 
 Name:           python-%{pypi_name}
-Version:        17.9.3
-Release:        1.git%{shortcommit}%{?dist}
+Version:        17.10.1
+Release:        1%{?dist}
 Summary:        Python networking library for WebSocket and WAMP
 
 License:        MIT
 URL:            https://pypi.python.org/pypi/%{pypi_name}
 # pypi release doen't include README, nor doc, so using github instead
 # See: https://github.com/tavendo/AutobahnPython/issues/429
-Source0:        https://github.com/%{project_owner}/%{github_name}/archive/%{commit}/%{github_name}-%{commit}.tar.gz
+Source0:        https://github.com/%{project_owner}/%{github_name}/archive/v%{version}/%{github_name}-%{version}.tar.gz
 
 BuildArch:      noarch
 BuildRequires:  python2-devel
@@ -118,7 +116,7 @@ HTML documentation
 
 
 %prep
-%setup -qn %{github_name}-%{commit}
+%setup -qn %{github_name}-%{version}
 
 # Remove upstream's egg-info
 rm -rf %{pypi_name}.egg-info
@@ -174,6 +172,10 @@ PYTHONPATH=$(pwd) py.test-%{python2_version} --pyargs autobahn
 
 
 %changelog
+* Mon Nov 06 2017 Julien Enselme <jujens@jujens.eu> - 17.10.1-1
+- Update to 17.10.1
+- Use %%version to get the sources
+
 * Tue Sep 26 2017 Julien Enselme <jujens@jujens.eu> - 17.9.3-1.gitd398c4d
 - Update to 17.9.3
 
