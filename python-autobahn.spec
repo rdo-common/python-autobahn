@@ -8,7 +8,7 @@
 
 Name:           python-%{pypi_name}
 Version:        17.10.1
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Python networking library for WebSocket and WAMP
 
 License:        MIT
@@ -19,23 +19,23 @@ Source0:        https://github.com/%{project_owner}/%{github_name}/archive/v%{ve
 
 BuildArch:      noarch
 BuildRequires:  python2-devel
-BuildRequires:  python-pep8
-BuildRequires:  python-flake8
-BuildRequires:  python-mock >= 1.3.0
-BuildRequires:  pytest >= 2.6.4
-BuildRequires:  python-six >= 1.10.0
+BuildRequires:  python2-pep8
+BuildRequires:  python2-flake8
+BuildRequires:  python2-mock >= 1.3.0
+BuildRequires:  python2-pytest >= 2.6.4
+BuildRequires:  python2-six >= 1.10.0
 BuildRequires:  python2-txaio >= 2.2.1
-BuildRequires:  python-trollius >= 2.0
-BuildRequires:  python-futures >= 3.0.4
-BuildRequires:  python-unittest2 >= 1.1.0
+BuildRequires:  python2-trollius >= 2.0
+BuildRequires:  python2-futures >= 3.0.4
+BuildRequires:  python2-unittest2 >= 1.1.0
 %if 0%{with_doc}
-BuildRequires:  python-scour # No python 3, https://github.com/oberstet/scour/issues/4
-BuildRequires:  scons
+BuildRequires:  python2-scour # No python 3, https://github.com/oberstet/scour/issues/4
+BuildRequires:  python2-scons
 BuildRequires:  python-taschenmesser # No python 3, https://github.com/oberstet/taschenmesser/issues/3
-BuildRequires:  python-sphinx
+BuildRequires:  python2-sphinx
 BuildRequires:  python-sphinx-theme-bootstrap # Not packaged yet
-BuildRequires:  python-sphinxcontrib-spelling # Not packaged yet
-BuildRequires:  python-repoze-sphinx-autointerface
+BuildRequires:  python2-sphinxcontrib-spelling # Not packaged yet
+BuildRequires:  python2-repoze-sphinx-autointerface
 BuildRequires:  python-pyenchant
 %endif # End with_doc
 
@@ -48,16 +48,16 @@ for Twisted and asyncio on Python 2 & 3 and for writing servers and clients.
 
 
 %package -n     python2-%{pypi_name}
-Requires:       python-twisted >= 15.5
-Requires:       python-zope-interface >= 4.1.3
-Requires:       python-trollius >= 2.0
-Requires:       python-futures >= 3.0.4
+Requires:       python2-twisted >= 15.5
+Requires:       python2-zope-interface >= 4.1.3
+Requires:       python2-trollius >= 2.0
+Requires:       python2-futures >= 3.0.4
 Requires:       python2-ujson >= 1.33
 Requires:       python2-wsaccel >= 0.6.2
-Requires:       python-snappy >= 0.5
-Requires:       python-lz4 >= 0.7.0
-Requires:       python-msgpack >= 0.4.6
-Requires:       python-six >= 1.10.0
+Requires:       python2-snappy >= 0.5
+Requires:       python2-lz4 >= 0.7.0
+Requires:       python2-msgpack >= 0.4.6
+Requires:       python2-six >= 1.10.0
 Requires:       python2-txaio >= 2.5.1
 Summary:        Python networking library for WebSocket and WAMP
 %{?python_provide:%python_provide python2-%{pypi_name}}
@@ -172,6 +172,10 @@ PYTHONPATH=$(pwd) py.test-%{python2_version} --pyargs autobahn
 
 
 %changelog
+* Mon Jan 15 2018 Iryna Shcherbina <ishcherb@redhat.com> - 17.10.1-2
+- Update Python 2 dependency declarations to new packaging standards
+  (See https://fedoraproject.org/wiki/FinalizingFedoraSwitchtoPython3)
+
 * Mon Nov 06 2017 Julien Enselme <jujens@jujens.eu> - 17.10.1-1
 - Update to 17.10.1
 - Use %%version to get the sources
