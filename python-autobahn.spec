@@ -8,7 +8,7 @@
 
 Name:           python-%{pypi_name}
 Version:        17.10.1
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Python networking library for WebSocket and WAMP
 
 License:        MIT
@@ -172,6 +172,9 @@ PYTHONPATH=$(pwd) py.test-%{python2_version} --pyargs autobahn
 
 
 %changelog
+* Fri Feb 09 2018 Fedora Release Engineering <releng@fedoraproject.org> - 17.10.1-3
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_28_Mass_Rebuild
+
 * Mon Jan 15 2018 Iryna Shcherbina <ishcherb@redhat.com> - 17.10.1-2
 - Update Python 2 dependency declarations to new packaging standards
   (See https://fedoraproject.org/wiki/FinalizingFedoraSwitchtoPython3)
