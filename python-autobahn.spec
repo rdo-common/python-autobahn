@@ -7,7 +7,7 @@
 %global _docdir_fmt %{name}
 
 Name:           python-%{pypi_name}
-Version:        17.10.1
+Version:        18.3.1
 Release:        3%{?dist}
 Summary:        Python networking library for WebSocket and WAMP
 
@@ -172,6 +172,9 @@ PYTHONPATH=$(pwd) py.test-%{python2_version} --pyargs autobahn
 
 
 %changelog
+* Tue Mar 06 2018 Julien Enselme <jujens@jujens.eu> - 18.3.1-1
+- Update to 18.3.1
+
 * Fri Feb 09 2018 Fedora Release Engineering <releng@fedoraproject.org> - 17.10.1-3
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_28_Mass_Rebuild
 
