@@ -8,7 +8,7 @@
 
 Name:           python-%{pypi_name}
 Version:        18.4.1
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Python networking library for WebSocket and WAMP
 
 License:        MIT
@@ -28,6 +28,7 @@ BuildRequires:  python2-txaio >= 2.10.0
 BuildRequires:  python2-trollius >= 2.0
 BuildRequires:  python2-futures >= 3.0.4
 BuildRequires:  python2-unittest2 >= 1.1.0
+BuildRequires:  python2-cffi
 %if 0%{with_doc}
 BuildRequires:  python2-scour # No python 3, https://github.com/oberstet/scour/issues/4
 BuildRequires:  python2-scons
@@ -59,6 +60,7 @@ Requires:       python2-lz4 >= 0.7.0
 Requires:       python2-msgpack >= 0.4.6
 Requires:       python2-six >= 1.10.0
 Requires:       python2-txaio >= 2.10.0
+Requires:       python2-cffi
 Summary:        Python networking library for WebSocket and WAMP
 %{?python_provide:%python_provide python2-%{pypi_name}}
 
@@ -74,6 +76,7 @@ for Twisted and asyncio on Python 2 & 3 and for writing servers and clients.
 Summary:        Python networking library for WebSocket and WAMP
 BuildArch:      noarch
 BuildRequires:  python3-devel >= 3.4
+BuildRequires:  python3-cffi
 BuildRequires:  python3-pep8
 BuildRequires:  python3-flake8
 BuildRequires:  python3-mock >= 1.3.0
@@ -90,6 +93,7 @@ Requires:       python3-lz4 >= 0.2.1
 Requires:       python3-msgpack >= 0.4.6
 Requires:       python3-six >= 1.10.0
 Requires:       python3-txaio >= 2.10.0
+Requires:       python3-cffi
 %{?python_provide:%python_provide python3-%{pypi_name}}
 
 %description -n python3-%{pypi_name}
@@ -172,6 +176,9 @@ PYTHONPATH=$(pwd) py.test-%{python2_version} --pyargs autobahn
 
 
 %changelog
+* Sun Apr 15 2018 Julien Enselme <jujens@jujens.eu> - 18.4.1-2
+- Correct requires
+
 * Sun Apr 15 2018 Julien Enselme <jujens@jujens.eu> - 18.4.1-1
 - Update to 18.4.1
 
