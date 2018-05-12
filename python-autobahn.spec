@@ -7,8 +7,8 @@
 %global _docdir_fmt %{name}
 
 Name:           python-%{pypi_name}
-Version:        18.4.1
-Release:        2%{?dist}
+Version:        18.5.1
+Release:        1%{?dist}
 Summary:        Python networking library for WebSocket and WAMP
 
 License:        MIT
@@ -142,10 +142,11 @@ cd doc && make build_no_network
 
 
 %check
-PYTHONPATH=$(pwd) py.test-%{python3_version} --pyargs autobahn
+# Ignore tests that rely on optionnal and not packaged deps.
+USE_ASYNCIO=1 PYTHONPATH=$(pwd) py.test-%{python3_version} --pyargs autobahn -k 'not test_unknown_arg and not test_no_memory_arg and not test_basic and not test_argon2id_static'
 # Skip Python 3 only tests
 rm -f autobahn/asyncio/test/test_asyncio_websocket.py
-PYTHONPATH=$(pwd) py.test-%{python2_version} --pyargs autobahn
+USE_ASYNCIO=1 PYTHONPATH=$(pwd) py.test-%{python2_version} --pyargs autobahn -k 'not test_unknown_arg and not test_no_memory_arg and not test_basic and not test_argon2id_static'
 
 
 %files -n python2-%{pypi_name}
@@ -176,6 +177,9 @@ PYTHONPATH=$(pwd) py.test-%{python2_version} --pyargs autobahn
 
 
 %changelog
+* Sat May 12 2018 Julien Enselme <jujens@jujens.eu> - 18.5.1-1
+- Update to 18.5.1
+
 * Sun Apr 15 2018 Julien Enselme <jujens@jujens.eu> - 18.4.1-2
 - Correct requires
 
