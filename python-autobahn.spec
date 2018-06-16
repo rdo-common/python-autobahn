@@ -7,7 +7,7 @@
 %global _docdir_fmt %{name}
 
 Name:           python-%{pypi_name}
-Version:        18.5.1
+Version:        18.6.1
 Release:        1%{?dist}
 Summary:        Python networking library for WebSocket and WAMP
 
