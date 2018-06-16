@@ -177,6 +177,9 @@ USE_ASYNCIO=1 PYTHONPATH=$(pwd) py.test-%{python2_version} --pyargs autobahn -k 
 
 
 %changelog
+* Sat Jun 16 2018 Julien Enselme <jujens@jujens.eu> - 18.6.1-1
+- Update to 18.6.1
+
 * Sat May 12 2018 Julien Enselme <jujens@jujens.eu> - 18.5.1-1
 - Update to 18.5.1
 
