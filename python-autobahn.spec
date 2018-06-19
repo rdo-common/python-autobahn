@@ -8,7 +8,7 @@
 
 Name:           python-%{pypi_name}
 Version:        18.6.1
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Python networking library for WebSocket and WAMP
 
 License:        MIT
@@ -177,6 +177,9 @@ USE_ASYNCIO=1 PYTHONPATH=$(pwd) py.test-%{python2_version} --pyargs autobahn -k 
 
 
 %changelog
+* Tue Jun 19 2018 Miro Hrončok <mhroncok@redhat.com> - 18.6.1-2
+- Rebuilt for Python 3.7
+
 * Sat Jun 16 2018 Julien Enselme <jujens@jujens.eu> - 18.6.1-1
 - Update to 18.6.1
 
