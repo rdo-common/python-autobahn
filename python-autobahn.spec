@@ -146,10 +146,10 @@ cd doc && make build_no_network
 
 %check
 # Ignore tests that rely on optionnal and not packaged deps.
-USE_ASYNCIO=1 PYTHONPATH=$(pwd) py.test-%{python3_version} --pyargs autobahn -k 'not test_unknown_arg and not test_no_memory_arg and not test_basic and not test_argon2id_static'
+USE_ASYNCIO=1 PYTHONPATH=$(pwd) py.test-%{python3_version} --pyargs autobahn -k 'not test_unknown_arg and not test_no_memory_arg and not test_basic and not test_argon2id_static and not test_websocket_custom_loop'
 # Skip Python 3 only tests
 rm -f autobahn/asyncio/test/test_asyncio_websocket.py
-USE_ASYNCIO=1 PYTHONPATH=$(pwd) py.test-%{python2_version} --pyargs autobahn -k 'not test_unknown_arg and not test_no_memory_arg and not test_basic and not test_argon2id_static'
+USE_ASYNCIO=1 PYTHONPATH=$(pwd) py.test-%{python2_version} --pyargs autobahn -k 'not test_unknown_arg and not test_no_memory_arg and not test_basic and not test_argon2id_static and not test_websocket_custom_loop'
 
 
 %files -n python2-%{pypi_name}
