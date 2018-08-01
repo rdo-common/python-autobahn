@@ -1,0 +1,128 @@
+From 9b6fb57e5c87a5e29cd880f752a30b9409d480c6 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Alex=20Gr=C3=B6nholm?= <alex.gronholm@nextday.fi>
+Date: Sun, 29 Jul 2018 15:20:51 +0100
+Subject: [PATCH] Fixed Python 3.7 compatibility (#1028)
+
+* Fixed Python 3.7 compatibility
+
+Python 3.7 made "async" a keyword which caused a SyntaxError in the autobahn.asyncio.websocket module. This patch (by @Ardonius) fixes that.
+This also removes imports of undocumented asyncio test modules that were removed in Python 3.7 which caused tests to fail.
+
+* Fixed flake8 errors
+---
+ .travis.yml                                     | 27 +++++++++++++++++++++++++
+ autobahn/asyncio/test/test_asyncio_websocket.py | 18 ++---------------
+ autobahn/asyncio/websocket.py                   |  2 +-
+ tox.ini                                         |  6 +++---
+ 4 files changed, 33 insertions(+), 20 deletions(-)
+
+diff --git a/.travis.yml b/.travis.yml
+index 5553ecc3..1195c56f 100644
+--- a/.travis.yml
++++ b/.travis.yml
+@@ -86,6 +86,33 @@ matrix:
+       env:
+       - TOX_ENV=py36-asyncio
+ 
++    #
++    # CPython 3.7
++    #
++    - python: 3.7
++      dist: xenial
++      sudo: required
++      env:
++      - TOX_ENV=py37-tw154
++
++    - python: 3.7
++      dist: xenial
++      sudo: required
++      env:
++      - TOX_ENV=py37-tw187
++
++    - python: 3.7
++      dist: xenial
++      sudo: required
++      env:
++      - TOX_ENV=py37-twtrunk
++
++    - python: 3.7
++      dist: xenial
++      sudo: required
++      env:
++      - TOX_ENV=py37-asyncio
++
+     #
+     # PyPy3
+     #
+diff --git a/autobahn/asyncio/test/test_asyncio_websocket.py b/autobahn/asyncio/test/test_asyncio_websocket.py
+index 016c7526..b368791b 100644
+--- a/autobahn/asyncio/test/test_asyncio_websocket.py
++++ b/autobahn/asyncio/test/test_asyncio_websocket.py
+@@ -3,10 +3,6 @@
+ import sys
+ 
+ # because py.test tries to collect it as a test-case
+-try:
+-    from asyncio.test_utils import TestLoop as AsyncioTestLoop
+-except ImportError:
+-    from trollius.test_utils import TestLoop as AsyncioTestLoop
+ try:
+     from unittest.mock import Mock
+ except ImportError:
+@@ -23,14 +19,8 @@
+ class Test(TestCase):
+ 
+     @pytest.mark.asyncio(forbid_global_loop=True)
+-    def test_websocket_custom_loop(self):
+-
+-        def time_gen():
+-            yield
+-            yield
+-
+-        loop = AsyncioTestLoop(time_gen)
+-        factory = WebSocketServerFactory(loop=loop)
++    def test_websocket_custom_loop(self, event_loop):
++        factory = WebSocketServerFactory(loop=event_loop)
+         server = factory()
+         transport = Mock()
+ 
+@@ -80,9 +70,5 @@ def cb(x):
+         ])
+         server.processHandshake()
+ 
+-        import asyncio
+-        from asyncio.test_utils import run_once
+-        run_once(asyncio.get_event_loop())
+-
+         self.assertEqual(1, len(values))
+         self.assertEqual(42 * 42, values[0])
+diff --git a/autobahn/asyncio/websocket.py b/autobahn/asyncio/websocket.py
+index 12de7443..fe9022a4 100644
+--- a/autobahn/asyncio/websocket.py
++++ b/autobahn/asyncio/websocket.py
+@@ -49,7 +49,7 @@
+ if hasattr(asyncio, 'ensure_future'):
+     ensure_future = asyncio.ensure_future
+ else:  # Deprecated since Python 3.4.4
+-    ensure_future = asyncio.async
++    ensure_future = getattr(asyncio, 'async')
+ 
+ __all__ = (
+     'WebSocketServerProtocol',
+diff --git a/tox.ini b/tox.ini
+index fb3a184b..49cb7985 100644
+--- a/tox.ini
++++ b/tox.ini
+@@ -47,9 +47,9 @@ deps =
+ 
+     py33-asyncio: pytest_asyncio<0.6
+     py34-asyncio: pytest_asyncio<0.6
+-    py35-asyncio: pytest_asyncio<0.6
+-    py36-asyncio: pytest_asyncio<0.6
+-    py37-asyncio: pytest_asyncio<0.6
++    py35-asyncio: pytest_asyncio
++    py36-asyncio: pytest_asyncio
++    py37-asyncio: pytest_asyncio
+ 
+     ; aiohttp requires Python 3.4.2+
+     ; py34-asyncio: pytest-aiohttp

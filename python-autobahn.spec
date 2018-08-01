@@ -16,6 +16,8 @@ URL:            https://pypi.python.org/pypi/%{pypi_name}
 # pypi release doen't include README, nor doc, so using github instead
 # See: https://github.com/tavendo/AutobahnPython/issues/429
 Source0:        https://github.com/%{project_owner}/%{github_name}/archive/v%{version}/%{github_name}-%{version}.tar.gz
+# From https://github.com/crossbario/autobahn-python/commit/9b6fb57e5c87a5e29cd880f752a30b9409d480c6
+Patch0:         ensure-python37-compat.patch
 
 BuildArch:      noarch
 BuildRequires:  python2-devel
@@ -121,6 +123,7 @@ HTML documentation
 
 %prep
 %setup -qn %{github_name}-%{version}
+%patch0 -p1
 
 # Remove upstream's egg-info
 rm -rf %{pypi_name}.egg-info
