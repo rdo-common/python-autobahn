@@ -8,7 +8,7 @@
 
 Name:           python-%{pypi_name}
 Version:        18.7.1
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Python networking library for WebSocket and WAMP
 
 License:        MIT
@@ -180,6 +180,9 @@ USE_ASYNCIO=1 PYTHONPATH=$(pwd) py.test-%{python2_version} --pyargs autobahn -k 
 
 
 %changelog
+* Sat Feb 02 2019 Fedora Release Engineering <releng@fedoraproject.org> - 18.7.1-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_30_Mass_Rebuild
+
 * Wed Aug 01 2018 Julien Enselme <jujens@jujens.eu> - 18.7.1-1
 - Update to 18.7.1
 
