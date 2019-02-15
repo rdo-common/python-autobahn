@@ -7,8 +7,8 @@
 %global _docdir_fmt %{name}
 
 Name:           python-%{pypi_name}
-Version:        18.7.1
-Release:        2%{?dist}
+Version:        19.1.1
+Release:        1%{?dist}
 Summary:        Python networking library for WebSocket and WAMP
 
 License:        MIT
@@ -16,8 +16,6 @@ URL:            https://pypi.python.org/pypi/%{pypi_name}
 # pypi release doen't include README, nor doc, so using github instead
 # See: https://github.com/tavendo/AutobahnPython/issues/429
 Source0:        https://github.com/%{project_owner}/%{github_name}/archive/v%{version}/%{github_name}-%{version}.tar.gz
-# From https://github.com/crossbario/autobahn-python/commit/9b6fb57e5c87a5e29cd880f752a30b9409d480c6
-Patch0:         ensure-python37-compat.patch
 
 BuildArch:      noarch
 BuildRequires:  python2-devel
@@ -25,11 +23,10 @@ BuildRequires:  python2-pep8
 BuildRequires:  python2-flake8
 BuildRequires:  python2-mock >= 1.3.0
 BuildRequires:  python2-pytest >= 2.6.4
-BuildRequires:  python2-six >= 1.10.0
+BuildRequires:  python2-six >= 1.11.0
 BuildRequires:  python2-txaio >= 2.10.0
 BuildRequires:  python2-trollius >= 2.0
 BuildRequires:  python2-futures >= 3.0.4
-BuildRequires:  python2-unittest2 >= 1.1.0
 BuildRequires:  python2-cffi
 %if 0%{with_doc}
 BuildRequires:  python2-scour # No python 3, https://github.com/oberstet/scour/issues/4
@@ -60,7 +57,7 @@ Requires:       python2-wsaccel >= 0.6.2
 Requires:       python2-snappy >= 0.5
 Requires:       python2-lz4 >= 0.7.0
 Requires:       python2-msgpack >= 0.4.6
-Requires:       python2-six >= 1.10.0
+Requires:       python2-six >= 1.11.0
 Requires:       python2-txaio >= 2.10.0
 Requires:       python2-cffi
 Summary:        Python networking library for WebSocket and WAMP
@@ -84,16 +81,15 @@ BuildRequires:  python3-flake8
 BuildRequires:  python3-mock >= 1.3.0
 BuildRequires:  python3-pytest >= 2.8.6
 BuildRequires:  python3-pytest-asyncio
-BuildRequires:  python3-six >= 1.10.0
+BuildRequires:  python3-six >= 1.11.0
 BuildRequires:  python3-txaio >= 2.2.1
-BuildRequires:  python3-unittest2 >= 1.1.0
 Requires:       python3-zope-interface >= 3.6
 Requires:       python3-ujson >= 1.33
 Requires:       python3-wsaccel >= 0.6.2
 Requires:       python3-snappy >= 0.5
 Requires:       python3-lz4 >= 0.2.1
 Requires:       python3-msgpack >= 0.4.6
-Requires:       python3-six >= 1.10.0
+Requires:       python3-six >= 1.11.0
 Requires:       python3-txaio >= 2.10.0
 Requires:       python3-cffi
 %{?python_provide:%python_provide python3-%{pypi_name}}
@@ -123,7 +119,6 @@ HTML documentation
 
 %prep
 %setup -qn %{github_name}-%{version}
-%patch0 -p1
 
 # Remove upstream's egg-info
 rm -rf %{pypi_name}.egg-info
