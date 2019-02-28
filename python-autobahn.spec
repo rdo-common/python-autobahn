@@ -12,7 +12,7 @@
 
 Name:           python-%{pypi_name}
 Version:        19.1.1
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Python networking library for WebSocket and WAMP
 
 License:        MIT
@@ -57,7 +57,11 @@ for Twisted and asyncio on Python 2 & 3 and for writing servers and clients.
 
 %package -n     python2-%{pypi_name}
 Requires:       python2-twisted >= 15.5
-Requires:       python2-zope-interface >= 4.1.3
+%if 0%{?fedora} || 0%{?rhel} > 7
+Requires:       python2-zope-interface >= 3.6
+%else
+Requires:       python-zope-interface >= 3.6
+%endif
 Requires:       python2-trollius >= 2.0
 Requires:       python2-futures >= 3.0.4
 Requires:       python2-ujson >= 1.33
@@ -193,6 +197,9 @@ USE_ASYNCIO=1 PYTHONPATH=$(pwd) py.test-%{python2_version} --pyargs autobahn -k 
 
 
 %changelog
+* Thu Feb 28 2019 Yatin Karel <ykarel@redhat.com> - 19.1.1-2
+- Fix zope-interface dependency for el7
+
 * Sat Feb 02 2019 Fedora Release Engineering <releng@fedoraproject.org> - 18.7.1-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_30_Mass_Rebuild
 
